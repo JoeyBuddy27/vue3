@@ -1,10 +1,13 @@
 <template>
-	<div>{{ name }} {{ doubleCount }} {{ doubleNumber }} {{ doubleValue }}</div>
-	<button @click="increment">Increment Pinia store</button>
-	<input type="text" v-model="nameModel" />
+	<div>{{ doubleCount }}</div>
+	<div style="margin-bottom: 20px">
+		<button @click="increment">Increment Pinia store</button>
+	</div>
+	<div style="margin-bottom: 20px">
+		<input type="text" v-model="nameModel" />
+	</div>
 	<button @click="() => updateName(nameModel)">Update name</button>
-	<div :key="name">Pinia store name: {{ name }}</div>
-	<div>Name model: {{ nameModel }}</div>
+	<div style="margin-top: 20px" :key="name">Pinia store name: {{ name }}</div>
 </template>
 
 <script>
