@@ -73,12 +73,14 @@
 			const store = usePackagesStore();
 
 			// const selectedPackagesArray = ref([]);
-			const checkedPackages = ref();
+
 			const saving = ref(false);
 			const snackbarOpen = ref(false);
 
 			const { selectedPackages } = storeToRefs(store);
 			const { addPackage, removePackage, setPackages } = store;
+			const checkedPackages = ref(selectedPackages.value.map(({ uid }) => uid));
+			console.log('checkedPackages.value: ', checkedPackages.value);
 
 			const updateCheckedPackages = (isChecked, uid) => {
 				if (isChecked) {
