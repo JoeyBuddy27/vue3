@@ -1,29 +1,49 @@
-<template>
-	<img alt="Vue logo" src="./assets/logo.png" />
-	<!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
-	<PiniaTest />
-</template>
-
 <script>
-	// import HelloWorld from './components/HelloWorld.vue';
-	import PiniaTest from './components/Pinia.vue';
+	import HomePage from './Pages/HomePage.vue';
+	import PackagesPage from './Pages/PackagesPage.vue';
+	import NotFound from './Pages/NotFound.vue';
+	import SideNav from './components/SideNav.vue';
+
+	const routes = {
+		'/': HomePage,
+		'/packages': PackagesPage,
+	};
 
 	export default {
-		name: 'App',
 		components: {
-			// HelloWorld,
-			PiniaTest,
+			SideNav,
+		},
+		data() {
+			return {
+				currentPath: window.location.hash,
+			};
+		},
+		computed: {
+			currentView() {
+				return routes[this.currentPath.slice(1) || '/'] || NotFound;
+			},
+		},
+		mounted() {
+			window.addEventListener('hashchange', () => {
+				this.currentPath = window.location.hash;
+			});
 		},
 	};
 </script>
 
-<style>
-	#app {
-		font-family: Avenir, Helvetica, Arial, sans-serif;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		text-align: center;
-		color: #2c3e50;
-		margin-top: 60px;
-	}
-</style>
+<template>
+	<!-- <a href="#/">Home</a> | <a href="#/packages">Packages</a> |
+	<a href="#/non-existent-path">Broken Link</a> -->
+	<v-app>
+		<!-- <v-container class="m-0 p-0"> -->
+		<v-row class="m-0 p-0">
+			<v-col cols="2">
+				<SideNav />
+			</v-col>
+			<v-col cols="10">
+				<component :is="currentView" />
+			</v-col>
+		</v-row>
+		<!-- </v-container> -->
+	</v-app>
+</template>

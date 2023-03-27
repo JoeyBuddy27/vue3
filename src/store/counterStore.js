@@ -18,3 +18,26 @@ export const useCounterStore = defineStore('counter', () => {
 
 	return { count, name, doubleCount, increment, updateName };
 });
+
+export const usePackagesStore = defineStore('packages', () => {
+	// packagesUID
+	const selectedPackages = ref([]);
+
+	function setPackages(newPackages) {
+		selectedPackages.value = newPackages;
+	}
+
+	function addPackage(newPackage) {
+		selectedPackages.value.push(newPackage);
+	}
+
+	function removePackage(packageUID) {
+		console.log('remove package', packageUID);
+		// TODO: Edit logic depending on obj structure
+		selectedPackages.value = selectedPackages.value.filter(
+			pkg => pkg.uid !== packageUID,
+		);
+	}
+
+	return { selectedPackages, addPackage, removePackage, setPackages };
+});
