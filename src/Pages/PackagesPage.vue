@@ -33,6 +33,7 @@
 					</v-list>
 					<v-alert
 						v-else
+						class="my-4"
 						type="error"
 						title="Unable to fetch packages"
 						text="Something went wrong, try again later!"
@@ -47,6 +48,7 @@
 					:loading="saving"
 					title="Save"
 					color="green-darken-2"
+					:disabled="!venues.length"
 					>Save</v-btn
 				>
 			</v-col>
