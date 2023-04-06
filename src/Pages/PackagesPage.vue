@@ -8,33 +8,42 @@
 				<div class="text-subtitle-1">Available Packages</div>
 			</v-col>
 			<v-col>
-				<!-- TODO - map through -->
 				<v-card class="" max-width="450">
 					<v-toolbar color="green-darken-1">
 						<v-toolbar-title>Choose packages</v-toolbar-title>
 					</v-toolbar>
-					<v-list item-props lines="three">
+					<v-list v-if="venues.length" item-props lines="three">
 						<PackageListItem
-							v-for="item in mockPackagesData"
+							v-for="item in venues"
 							:key="item.uid"
-							:imageUrl="item.imageUrl"
-							:title="item.title"
-							:subtitle="item.subtitle"
-							:description="item.description"
+							:imageUrl="
+								item?.default_image?.file?.url ||
+								item?.images[0]?.file?.url
+							"
+							:title="item?.short_name || item?.full_name"
+							:description="item?.short_description"
 							:is-selected-package="
 								selectedPackages.some(({ uid }) => uid === item.uid)
 							"
 							:uid="item.uid"
 							@update-checked-packages="
-								(checked, uid) => updateCheckedPackages(checked, uid)
+								checked => updateCheckedPackages(checked, item)
 							"
 						/>
 					</v-list>
+					<v-alert
+						v-else
+						type="error"
+						title="Unable to fetch packages"
+						text="Something went wrong, try again later!"
+					>
+					</v-alert>
 				</v-card>
 			</v-col>
+
 			<v-col cols="12">
 				<v-btn
-					@click="savePackagesToStore"
+					@click="savePackagesToStore()"
 					:loading="saving"
 					title="Save"
 					color="green-darken-2"
@@ -55,14 +64,12 @@
 </template>
 
 <script>
-	// TODO - fetch packages (array of UIDs)
-	// Then call CS API to get package details
-
-	import { usePackagesStore } from '../store/counterStore';
-	import { defineComponent, ref } from 'vue';
+	import { usePackagesStore } from '../store/packagesStore';
+	import { defineComponent, onMounted, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 	import { mockPackagesData } from '../mockPackagesData';
 	import PackageListItem from '@/components/PackageListItem.vue';
+	import csMethodsAPI from '../api/fetchMethods';
 
 	export default defineComponent({
 		name: 'PackagesPage',
@@ -72,41 +79,53 @@
 		setup() {
 			const store = usePackagesStore();
 
-			// const selectedPackagesArray = ref([]);
-
 			const saving = ref(false);
 			const snackbarOpen = ref(false);
 
 			const { selectedPackages } = storeToRefs(store);
 			const { addPackage, removePackage, setPackages } = store;
-			const checkedPackages = ref(selectedPackages.value.map(({ uid }) => uid));
-			console.log('checkedPackages.value: ', checkedPackages.value);
 
-			const updateCheckedPackages = (isChecked, uid) => {
+			let checkedPackages = [...selectedPackages?.value] || [];
+
+			const updateCheckedPackages = (isChecked, packageItem) => {
 				if (isChecked) {
-					checkedPackages.value.push(uid);
+					checkedPackages.push(packageItem);
 				} else {
-					checkedPackages.value = checkedPackages.value.filter(
-						checkedUid => checkedUid !== uid,
+					checkedPackages = checkedPackages.filter(
+						checkedItem => checkedItem.uid !== packageItem.uid,
 					);
 				}
 			};
 
-			// TODO: Snackbar on success
 			const savePackagesToStore = () => {
 				saving.value = true;
+				setPackages(checkedPackages);
 				setTimeout(() => {
-					setPackages(
-						mockPackagesData.filter(({ uid }) =>
-							checkedPackages.value.includes(uid),
-						),
-					);
 					saving.value = false;
 					snackbarOpen.value = true;
-				}, 2000);
+				}, 1500);
 			};
 
-			// TODO: Save button to update state?
+			const venueIds = [
+				'blt26dd895dadadb6c',
+				'bltacb14e3abb70f3fd',
+				'blt1a4f8185dc247e34',
+				'blt9230b24e2b9d4d35',
+			];
+			const venues = ref({});
+
+			const loadAPIMethods = async url => {
+				let res = await csMethodsAPI.getCSData(url);
+				venues.value = res?.entries || [];
+			};
+
+			onMounted(() => {
+				loadAPIMethods(
+					`venue/entries?query={ "uid": { "$in": ${`["${[
+						...new Set(venueIds),
+					].join('","')}"]`} } }&include[]=default_image&include[]=images`,
+				);
+			});
 
 			return {
 				selectedPackages,
@@ -118,6 +137,8 @@
 				savePackagesToStore,
 				saving,
 				snackbarOpen,
+				loadAPIMethods,
+				venues,
 			};
 		},
 	});

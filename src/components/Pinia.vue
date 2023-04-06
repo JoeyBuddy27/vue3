@@ -11,14 +11,14 @@
 </template>
 
 <script>
-	import { useCounterStore } from '../store/counterStore';
+	import { usePackagesStore } from '../store/packagesStore';
 	import { defineComponent, ref } from 'vue';
 	import { storeToRefs } from 'pinia';
 
 	export default defineComponent({
 		name: 'PiniaTest',
 		setup() {
-			const store = useCounterStore();
+			const store = usePackagesStore();
 
 			const { name, doubleCount, doubleNumber, doubleValue } = storeToRefs(store);
 			const { increment, updateName } = store;

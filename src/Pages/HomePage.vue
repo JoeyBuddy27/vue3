@@ -1,6 +1,4 @@
 <template>
-	<!-- TODO: Create package tile component -->
-	<!-- map through  -->
 	<v-container>
 		<v-row class="ma-2">
 			<v-col cols="12">
@@ -11,8 +9,6 @@
 			</v-col>
 		</v-row>
 		<v-row class="pt-4">
-			<!-- Map through -->
-			<!-- <div v-if="selectedPackages.length"> -->
 			<v-col
 				v-for="tile in selectedPackages"
 				:key="tile.uid"
@@ -22,10 +18,11 @@
 				lg="3"
 			>
 				<PackageTile
-					:title="tile.title"
-					:description="tile.description"
-					:subtitle="tile.subtitle"
-					:imageUrl="tile.imageUrl"
+					:title="tile?.short_name || tile?.full_name"
+					:description="tile?.short_description || title?.description"
+					:imageUrl="
+						tile?.images[0]?.file?.url || tile?.default_image?.file?.url
+					"
 					:uid="tile.uid"
 					@remove-package="uid => removePackage(uid)"
 				/>
@@ -45,14 +42,9 @@
 
 <script>
 	import PackageTile from '@/components/PackageTile.vue';
-
-	// TODO - fetch packages (array of UIDs)
-	// Then call CS API to get package details
-
-	import { usePackagesStore } from '../store/counterStore';
-	import { defineComponent, onBeforeMount } from 'vue';
+	import { usePackagesStore } from '../store/packagesStore';
+	import { defineComponent } from 'vue';
 	import { storeToRefs } from 'pinia';
-	import { mockPackagesData } from '../mockPackagesData';
 
 	export default defineComponent({
 		name: 'HomePage',
@@ -64,14 +56,6 @@
 
 			const { selectedPackages } = storeToRefs(store);
 			const { addPackage, removePackage, setPackages } = store;
-
-			// TODO: Remove - using for testing
-			onBeforeMount(() => {
-				// setPackages(mockPackagesData);
-				console.log(mockPackagesData);
-			});
-
-			// TODO: Grab uids from selectedPackages in store and fetch relevant CS data for venues
 
 			return {
 				selectedPackages,

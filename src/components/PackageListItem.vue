@@ -1,6 +1,5 @@
 <template>
-	<v-list-item :title="title" :subtitle="subtitle" :prepend-avatar="imageUrl">
-		<!-- <template v-slot:append="{ isActive }"> -->
+	<v-list-item :title="title" :subtitle="description" :prepend-avatar="imageUrl">
 		<template v-slot:append>
 			<v-list-item-action start>
 				<v-checkbox v-model="isActive"></v-checkbox>
@@ -19,9 +18,9 @@
 				type: String,
 				required: true,
 			},
-			subtitle: {
+			description: {
 				type: String,
-				required: true,
+				default: '',
 			},
 			imageUrl: {
 				type: String,
@@ -40,12 +39,10 @@
 			const isActive = ref(props.isSelectedPackage);
 
 			function updateChecked(checked, uid) {
-				console.log('updateChecked', checked, uid);
 				emit('updateCheckedPackages', checked, uid);
 			}
 
 			watch(isActive, newValue => {
-				console.log('watcher', newValue, props.uid);
 				updateChecked(newValue, props.uid);
 			});
 

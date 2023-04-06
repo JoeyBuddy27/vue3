@@ -38,15 +38,13 @@
 </template>
 
 <script>
-	import { usePackagesStore } from '../store/counterStore';
+	import { usePackagesStore } from '../store/packagesStore';
 	import { defineComponent, computed } from 'vue';
 	import { storeToRefs } from 'pinia';
 
 	export default defineComponent({
 		setup() {
 			const store = usePackagesStore();
-
-			// const selectedPackagesArray = ref([]);
 
 			const { selectedPackages } = storeToRefs(store);
 			const { addPackage, removePackage } = store;

@@ -20,7 +20,6 @@
 		},
 		setup(props) {
 			const store = useStore();
-			console.log(props);
 
 			const count = computed(() => {
 				return store.state.count;
