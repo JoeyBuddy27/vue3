@@ -11,7 +11,6 @@
 
 			<v-divider></v-divider>
 
-			<!-- TODO: Make links - add package count dynamically from store? -->
 			<v-list density="compact">
 				<v-list-item
 					prepend-icon="mdi-home"

@@ -32,10 +32,7 @@
 </script>
 
 <template>
-	<!-- <a href="#/">Home</a> | <a href="#/packages">Packages</a> |
-	<a href="#/non-existent-path">Broken Link</a> -->
 	<v-app>
-		<!-- <v-container class="m-0 p-0"> -->
 		<v-row class="m-0 p-0">
 			<v-col cols="2">
 				<SideNav />
@@ -44,6 +41,5 @@
 				<component :is="currentView" />
 			</v-col>
 		</v-row>
-		<!-- </v-container> -->
 	</v-app>
 </template>
